@@ -50,31 +50,35 @@ class FindDuplicatesPhoto {
         val step = (1.0f - _progress.value) / size
         loadAllImage()
 
-        for (i in photos.indices) {
+        val photosFind = photos.clone().toMutableList()
+        var sizeFind=photosFind.size
+        while (photosFind.isNotEmpty()) {
+            val photoCheck = photosFind.first()
             val iImage = mutableListOf<Photo>()
-            Log.i("FIND_DUB", "${i}/${size}")
-            for (j in i + 1 until  photos.size) {
-                if (photos[i].mat != null && photos[j].mat != null
-                    && compareImage(photos[i].mat!!, photos[j].mat!!)
+            Log.i("FIND_DUB", "${photosFind.size}/${size}")
+            var j=1
+            while (j<sizeFind) {
+                if (photoCheck.mat != null && photosFind[j].mat != null
+                    && compareImage(photoCheck.mat!!, photosFind[j].mat!!)
                 ) {
-                    var isFinded=false
-                    result.forEach {photosFind->
-                        isFinded=photosFind.find { it.uri==photos[j].uri }!=null
-
-                    }
-                    if(isFinded) break
                     if (iImage.isEmpty()) {
-                        iImage.add(photos[i].toPhoto())
-                        iImage.add(photos[j].toPhoto())
+                        iImage.add(photoCheck.toPhoto())
+                        iImage.add(photosFind[j].toPhoto())
                     } else {
-                        iImage.add(photos[j].toPhoto())
+                        iImage.add(photosFind[j].toPhoto())
                     }
+                    photosFind.remove(photosFind[j])
+                    sizeFind--
+                }else {
+                    j += 1
                 }
             }
             if (iImage.isNotEmpty()) {
                 result.add(iImage)
             }
-           val res= MainScope().async {
+            photosFind.remove(photoCheck)
+            sizeFind--
+            val res = MainScope().async {
                 _progress.value = _progress.value + step
                 _progress.emit(_progress.value)
             }
@@ -133,10 +137,10 @@ class FindDuplicatesPhoto {
             println("Время конвертации в серый цвет $totalTime ms")
 
             startTime = System.currentTimeMillis()*/
-            if(image1.width()!=image2.width() || image1.height()!=image2.height()) return false
+            if (image1.width() != image2.width() || image1.height() != image2.height()) return false
             val result = Mat()
             Core.compare(image1, image2, result, Core.CMP_NE)
-            val clippingLine=(image1.width()*image1.height()/100.0)*allowableDiffPercentage
+            val clippingLine = (image1.width() * image1.height() / 100.0) * allowableDiffPercentage
             val res = Core.countNonZero(result)
             res <= clippingLine
         } catch (e: Exception) {
@@ -155,28 +159,28 @@ class FindDuplicatesPhoto {
 
 
     //TODO удалить
-   /* @Throws(FileNotFoundException::class, IOException::class)
-    fun getThumbnail(uri: Uri,  reqWidth: Int,
-                     reqHeight: Int): Bitmap? {
-        var input: InputStream? = context.contentResolver?.openInputStream(uri)
-        val onlyBoundsOptions = BitmapFactory.Options()
-        onlyBoundsOptions.inJustDecodeBounds = true
-        onlyBoundsOptions.inDither = true //optional
-        onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //optional
-        BitmapFactory.decodeStream(input, null, onlyBoundsOptions)
-        input?.close()
-        if (onlyBoundsOptions.outWidth == -1 || onlyBoundsOptions.outHeight == -1) {
-            return null
-        }
-        val bitmapOptions = BitmapFactory.Options()
-        bitmapOptions.inSampleSize = calculateInSampleSize(onlyBoundsOptions, reqWidth, reqHeight)
-        bitmapOptions.inDither = true //optional
-        bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //
-        input = context.contentResolver.openInputStream(uri)
-        val bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions)
-        input?.close()
-        return bitmap
-    }*/
+    /* @Throws(FileNotFoundException::class, IOException::class)
+     fun getThumbnail(uri: Uri,  reqWidth: Int,
+                      reqHeight: Int): Bitmap? {
+         var input: InputStream? = context.contentResolver?.openInputStream(uri)
+         val onlyBoundsOptions = BitmapFactory.Options()
+         onlyBoundsOptions.inJustDecodeBounds = true
+         onlyBoundsOptions.inDither = true //optional
+         onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //optional
+         BitmapFactory.decodeStream(input, null, onlyBoundsOptions)
+         input?.close()
+         if (onlyBoundsOptions.outWidth == -1 || onlyBoundsOptions.outHeight == -1) {
+             return null
+         }
+         val bitmapOptions = BitmapFactory.Options()
+         bitmapOptions.inSampleSize = calculateInSampleSize(onlyBoundsOptions, reqWidth, reqHeight)
+         bitmapOptions.inDither = true //optional
+         bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //
+         input = context.contentResolver.openInputStream(uri)
+         val bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions)
+         input?.close()
+         return bitmap
+     }*/
 
 
     /* private fun getPowerOfTwoForSampleRatio(ratio: Double): Int {
@@ -184,7 +188,7 @@ class FindDuplicatesPhoto {
          return if (k == 0) 1 else k
      }*/
 
-   private fun decodeSampledBitmapFromUri(
+    private fun decodeSampledBitmapFromUri(
         uri: Uri,
         reqWidth: Int,
         reqHeight: Int
@@ -199,7 +203,8 @@ class FindDuplicatesPhoto {
         }
         input.close()
         // Calculate inSampleSize
-        onlyBoundsOptions.inSampleSize = calculateInSampleSize(onlyBoundsOptions, reqWidth, reqHeight)
+        onlyBoundsOptions.inSampleSize =
+            calculateInSampleSize(onlyBoundsOptions, reqWidth, reqHeight)
         input = context.contentResolver?.openInputStream(uri) ?: return null
         // Decode bitmap with inSampleSize set
         onlyBoundsOptions.inJustDecodeBounds = false
@@ -209,7 +214,11 @@ class FindDuplicatesPhoto {
     }
 
 
-    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options,
+        reqWidth: Int,
+        reqHeight: Int
+    ): Int {
         // Raw height and width of image
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1
@@ -237,8 +246,8 @@ class FindDuplicatesPhoto {
         return imageMat
     }
 
-    companion object{
-        const val allowableDiffPercentage=10
+    companion object {
+        const val allowableDiffPercentage = 10
 
 
     }
