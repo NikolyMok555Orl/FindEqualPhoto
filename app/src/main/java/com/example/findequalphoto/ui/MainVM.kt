@@ -8,9 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.findequalphoto.data.Photo
 import com.example.findequalphoto.data.PhotoRepo
 import com.example.findequalphoto.data.PhotoRepoImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainVM(application: Application, private val photoRepo: PhotoRepo) : AndroidViewModel(application) {
 
@@ -24,7 +26,9 @@ class MainVM(application: Application, private val photoRepo: PhotoRepo) : Andro
     fun findPhoto(){
         viewModelScope.launch {
             _statePhotoUI.emit(StateUI.Loading(0.01f))
-            photoRepo.getAllPhoto()
+            withContext(Dispatchers.IO) {
+                photoRepo.findDuplicatesPhoto()
+            }
         }
     }
 
@@ -37,9 +41,9 @@ class MainVM(application: Application, private val photoRepo: PhotoRepo) : Andro
     init {
         viewModelScope.launch {
             photoRepo.statePhoto.collect{
-                if(it.progress in 1..99){
-                    _statePhotoUI.emit(StateUI.Loading((it.progress / 100).toFloat()))
-                }else if(it.progress==100 || it.photos.isNotEmpty()){
+                if(it.progress >0.0f && it.progress<1.0f){
+                    _statePhotoUI.emit(StateUI.Loading(it.progress))
+                }else if(it.progress==1.0f || it.photos.isNotEmpty()){
                     _statePhotoUI.emit(StateUI.Loaded(it.photos))
                 }else{
                     _statePhotoUI.emit(StateUI.Start)
@@ -61,7 +65,7 @@ class MainVM(application: Application, private val photoRepo: PhotoRepo) : Andro
 sealed class StateUI(){
     object Start: StateUI()
     class Loading(val progress:Float): StateUI()
-    class Loaded(val photos:List<Photo>): StateUI()
+    class Loaded(val photos:List<List<Photo>>): StateUI()
 }
 
 

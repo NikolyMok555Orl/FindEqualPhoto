@@ -7,22 +7,28 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import org.opencv.core.Core
+import org.opencv.imgcodecs.Imgcodecs
+import org.opencv.core.Mat
 
-class PhotoRepoImpl(val context:Context) :PhotoRepo{
 
+class PhotoRepoImpl(private val context: Context) : PhotoRepo {
 
 
     private val photoList = mutableListOf<Photo>()
 
-    private val _statePhoto:MutableStateFlow<StatePhoto> = MutableStateFlow(StatePhoto())
-    override val statePhoto:StateFlow<StatePhoto>
+    private val _statePhoto: MutableStateFlow<StatePhoto> = MutableStateFlow(StatePhoto())
+    override val statePhoto: StateFlow<StatePhoto>
         get() = _statePhoto
 
-    override  suspend fun getAllPhoto() {
-
-        _statePhoto.emit(StatePhoto())
+    private suspend fun getAllPhoto(): Boolean {
+         withContext(Dispatchers.Main) {
+             _statePhoto.emit(StatePhoto())
+         }
         val collection =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 MediaStore.Images.Media.getContentUri(
@@ -50,9 +56,8 @@ class PhotoRepoImpl(val context:Context) :PhotoRepo{
             arrayOf(MediaStore.Files.FileColumns.DATE_ADDED)
         )
         // Page setting
-     /*   queryArgs.putInt(ContentResolver.QUERY_ARG_OFFSET, page * mPageSize)
-        queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, mPageSize)*/
-
+        /*   queryArgs.putInt(ContentResolver.QUERY_ARG_OFFSET, page * mPageSize)
+           queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, mPageSize)*/
 
 
         val sortOrder = "${MediaStore.Images.Media.DISPLAY_NAME} ASC"
@@ -64,7 +69,9 @@ class PhotoRepoImpl(val context:Context) :PhotoRepo{
             null,
             sortOrder
         )
-        _statePhoto.emit(StatePhoto(progress =  1))
+        withContext(Dispatchers.Main) {
+            _statePhoto.emit(StatePhoto(progress = 0.01f))
+        }
         query?.use { cursor ->
             // Cache column indices.
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
@@ -85,9 +92,12 @@ class PhotoRepoImpl(val context:Context) :PhotoRepo{
 
                 photoList += Photo(contentUri, name, size)
             }
-            _statePhoto.emit(StatePhoto(photoList.toList(), 100))
+            withContext(Dispatchers.Main) {
+                _statePhoto.emit(StatePhoto(progress = 0.02f))
+            }
+            return true
         }
-
+        return false
     }
 
     override suspend fun deletePhoto() {
@@ -95,42 +105,42 @@ class PhotoRepoImpl(val context:Context) :PhotoRepo{
     }
 
     override suspend fun findDuplicatesPhoto() {
-       /* val img1: Mat = Highgui.imread("mnt/sdcard/IMG-20121228.jpg")
-        val img2: Mat = Highgui.imread("mnt/sdcard/IMG-20121228-1.jpg")
-        val result = Mat()
+        val isFindPhoto = getAllPhoto()
+        if (isFindPhoto) {
+            val duplicatesPhoto = FindDuplicatesPhoto(photoList.subList(0, 300), context, _statePhoto.value.progress)
+            MainScope().launch {
+                duplicatesPhoto.progress.collect {
+                    _statePhoto.emit(StatePhoto(progress = it))
+                }
+            }
+            val res = duplicatesPhoto.findDublicates()
+            withContext(Dispatchers.Main) {
+                _statePhoto.emit(StatePhoto(res, 1.0f))
+            }
+        }
 
-        Core.compare(img1, img2, result, Core.CMP_NE)
-
-        val `val`: Int = Core.countNonZero(result)
-
-        if (`val` == 0) {
-            //Duplicate Image
-        } else {
-            //Different Image
-        }*/
     }
 
 
 }
 
 
-data class StatePhoto(val photos:List<Photo> = emptyList(),val progress:Int=0)
+//data class StatePhoto(val photos:List<Photo> = emptyList(),val progress:Int=0)
+data class StatePhoto(val photos: List<List<Photo>> = emptyList(), val progress: Float = 0.0f)
 
 
-
-interface PhotoRepo{
-
+interface PhotoRepo {
 
 
-    val statePhoto:StateFlow<StatePhoto>
+    val statePhoto: StateFlow<StatePhoto>
 
 
-    suspend fun  getAllPhoto()
+    //  suspend  fun  getAllPhoto()
 
 
     suspend fun deletePhoto()
 
-    suspend  fun findDuplicatesPhoto()
+    suspend fun findDuplicatesPhoto()
 
 
 }

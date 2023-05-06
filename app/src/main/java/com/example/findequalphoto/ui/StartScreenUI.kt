@@ -70,7 +70,7 @@ fun StartScreenUI(state: StateUI, findPhoto: () -> Unit, modifier: Modifier = Mo
         modifier = modifier.fillMaxSize()) {
         Text(text = "Старт")
         if(state is StateUI.Loading) {
-            LinearProgressIndicator(progress = (state as StateUI.Loading).progress)
+            LinearProgressIndicator(progress = (state).progress)
         }else{
             TextButton(onClick = findPhoto) {
                 Text("Найти фото")
