@@ -38,9 +38,13 @@ class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
         }
     }
 
-    fun deletePhoto(){
+    fun deletePhoto(isFinish:Boolean=false){
         viewModelScope.launch {
-            photoRepo.deleteAllPhoto()
+            if(!isFinish) {
+                photoRepo.deleteAllPhoto()
+            }else{
+                photoRepo.finishProgress()
+            }
         }
     }
 

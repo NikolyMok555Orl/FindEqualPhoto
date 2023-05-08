@@ -104,18 +104,24 @@ class PhotoRepoImpl(
     }
 
     override suspend fun deleteAllPhoto() {
-        _statePhoto.emit(_statePhoto.value.copy(progress = 0.0f))
+        withContext(Dispatchers.Main) {
+            _statePhoto.emit(_statePhoto.value.copy(progress = 0.01f))
+        }
         val deletesPhoto = _statePhoto.value.photos.flatten().filter { it.isSelect }
         val step = 1.0f / deletesPhoto.size
         try {
             withContext(Dispatchers.IO) {
                 deletesPhoto.forEach {
-                    contentResolver.delete(it.uri, null, null)
-                    MainScope().launch {
-                        _statePhoto.emit(_statePhoto.value.copy(progress = _statePhoto.value.progress + step))
-                    }.join()
+                    val res = contentResolver.delete(it.uri, null, null)
+                    if (res >= 1) {
+                        MainScope().launch {
+                            _statePhoto.emit(_statePhoto.value.copy(progress = _statePhoto.value.progress + step))
+                        }.join()
+                    }
                 }
-                _statePhoto.emit(_statePhoto.value.copy(progress = 1.0f))
+                withContext(Dispatchers.Main) {
+                    _statePhoto.emit(_statePhoto.value.copy(progress = 1.0f))
+                }
             }
         } catch (e: SecurityException) {
             val intentSender = when {
@@ -148,6 +154,12 @@ class PhotoRepoImpl(
             val photosTimeStap = _statePhoto.value.photos.toMutableList()
             photosTimeStap[indexAllPhotos] = photos
             _statePhoto.emit(StatePhoto(photosTimeStap.toList(), progress = 100.0f))
+        }
+    }
+
+    override suspend fun finishProgress() {
+        withContext(Dispatchers.Main) {
+            _statePhoto.emit(_statePhoto.value.copy(progress = 1.0f))
         }
     }
 
@@ -189,4 +201,6 @@ interface PhotoRepo {
     suspend fun findDuplicatesPhoto()
 
     suspend fun selectPhoto(photo: Photo, indexPhoto: Int)
+
+    suspend fun finishProgress()
 }

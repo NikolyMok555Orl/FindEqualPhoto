@@ -75,6 +75,8 @@ class MainActivity : ComponentActivity(), LoaderCallbackInterface, DeletePhotoEx
                         lifecycleScope.launch {
                              mainVM.deletePhoto()
                         }
+                    }else{
+                        mainVM.deletePhoto(true)
                     }
                     Toast.makeText(
                         this@MainActivity,
