@@ -7,14 +7,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.findequalphoto.data.Photo
 import com.example.findequalphoto.data.PhotoRepo
-import com.example.findequalphoto.data.PhotoRepoImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainVM(application: Application, private val photoRepo: PhotoRepo) : AndroidViewModel(application) {
+class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
 
 
 
@@ -33,9 +32,16 @@ class MainVM(application: Application, private val photoRepo: PhotoRepo) : Andro
     }
 
 
+    fun selectPhoto(photo:Photo, indexPhoto:Int){
+        viewModelScope.launch {
+            photoRepo.selectPhoto(photo, indexPhoto)
+        }
+    }
+
     fun deletePhoto(){
-
-
+        viewModelScope.launch {
+            photoRepo.deleteAllPhoto()
+        }
     }
 
     init {
@@ -54,8 +60,8 @@ class MainVM(application: Application, private val photoRepo: PhotoRepo) : Andro
 
 
     companion object{
-       fun getMainVM(application: Application, photoRepo: PhotoRepo)=object : ViewModelProvider.NewInstanceFactory() {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T = MainVM(application, photoRepo) as T
+       fun getMainVM(photoRepo: PhotoRepo)=object : ViewModelProvider.NewInstanceFactory() {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T = MainVM(photoRepo) as T
         }
     }
 

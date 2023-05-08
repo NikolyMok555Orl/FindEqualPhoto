@@ -1,6 +1,5 @@
-package com.example.findequalphoto
+package com.example.findequalphoto.ui
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,8 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.findequalphoto.ui.MainVM
-import com.example.findequalphoto.ui.StateUI
+import com.example.findequalphoto.MainActivity
+import com.example.findequalphoto.NavHost
 import com.example.findequalphoto.ui.theme.FindEqualPhotoTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -27,7 +26,8 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun StartScreenUI(navController: NavController,
-                  vm: MainVM = viewModel()) {
+                  vm: MainVM = viewModel(factory = MainVM.getMainVM(
+                      (LocalContext.current as MainActivity).repo))) {
 
 
     // Camera permission state

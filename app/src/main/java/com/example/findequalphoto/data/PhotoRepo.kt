@@ -1,22 +1,25 @@
 package com.example.findequalphoto.data
 
+import android.app.RecoverableSecurityException
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.content.IntentSender
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.activity.result.IntentSenderRequest
+import com.example.findequalphoto.MainActivity
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import org.opencv.core.Core
-import org.opencv.imgcodecs.Imgcodecs
-import org.opencv.core.Mat
 
 
-class PhotoRepoImpl(private val context: Context) : PhotoRepo {
+class PhotoRepoImpl(
+    private val contentResolver: ContentResolver,
+    private val senderAsDelete: (sended: IntentSender) -> Unit
+) : PhotoRepo {
 
 
     private val photoList = mutableListOf<Photo>()
@@ -25,10 +28,11 @@ class PhotoRepoImpl(private val context: Context) : PhotoRepo {
     override val statePhoto: StateFlow<StatePhoto>
         get() = _statePhoto
 
+
     private suspend fun getAllPhoto(): Boolean {
-         withContext(Dispatchers.Main) {
-             _statePhoto.emit(StatePhoto())
-         }
+        withContext(Dispatchers.Main) {
+            _statePhoto.emit(StatePhoto())
+        }
         val collection =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 MediaStore.Images.Media.getContentUri(
@@ -59,10 +63,9 @@ class PhotoRepoImpl(private val context: Context) : PhotoRepo {
         /*   queryArgs.putInt(ContentResolver.QUERY_ARG_OFFSET, page * mPageSize)
            queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, mPageSize)*/
 
-
         val sortOrder = "${MediaStore.Images.Media.DISPLAY_NAME} ASC"
 
-        val query = context.contentResolver.query(
+        val query = contentResolver.query(
             collection,
             projection,
             null,
@@ -100,14 +103,63 @@ class PhotoRepoImpl(private val context: Context) : PhotoRepo {
         return false
     }
 
-    override suspend fun deletePhoto() {
-        TODO("Not yet implemented")
+    override suspend fun deleteAllPhoto() {
+        _statePhoto.emit(_statePhoto.value.copy(progress = 0.0f))
+        val deletesPhoto = _statePhoto.value.photos.flatten().filter { it.isSelect }
+        val step = 1.0f / deletesPhoto.size
+        try {
+            withContext(Dispatchers.IO) {
+                deletesPhoto.forEach {
+                    contentResolver.delete(it.uri, null, null)
+                    MainScope().launch {
+                        _statePhoto.emit(_statePhoto.value.copy(progress = _statePhoto.value.progress + step))
+                    }.join()
+                }
+                _statePhoto.emit(_statePhoto.value.copy(progress = 1.0f))
+            }
+        } catch (e: SecurityException) {
+            val intentSender = when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                    MediaStore.createDeleteRequest(
+                        contentResolver,
+                        deletesPhoto.map { it.uri }.toList()
+                    ).intentSender
+                }
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                    val recoverableSecurityException =
+                        e as? RecoverableSecurityException
+                    recoverableSecurityException?.userAction?.actionIntent?.intentSender
+                }
+                else -> null
+            }
+            intentSender?.let { sender ->
+                senderAsDelete(sender)
+            }
+        }
+    }
+
+
+    override suspend fun selectPhoto(photo: Photo, indexAllPhotos: Int) {
+        if (indexAllPhotos > _statePhoto.value.photos.size) return
+        val indexPhoto = _statePhoto.value.photos[indexAllPhotos].indexOf(photo)
+        if (indexPhoto >= 0) {
+            var photos = _statePhoto.value.photos[indexAllPhotos].toMutableList()
+            photos[indexPhoto] = photos[indexPhoto].copy(isSelect = !photos[indexPhoto].isSelect)
+            val photosTimeStap = _statePhoto.value.photos.toMutableList()
+            photosTimeStap[indexAllPhotos] = photos
+            _statePhoto.emit(StatePhoto(photosTimeStap.toList(), progress = 100.0f))
+        }
     }
 
     override suspend fun findDuplicatesPhoto() {
         val isFindPhoto = getAllPhoto()
         if (isFindPhoto) {
-            val duplicatesPhoto = FindDuplicatesPhoto(photoList.subList(0, 300), context, _statePhoto.value.progress)
+            val duplicatesPhoto =
+                FindDuplicatesPhoto(
+                    photoList.subList(0, 500),
+                    contentResolver,
+                    _statePhoto.value.progress
+                )
             MainScope().launch {
                 duplicatesPhoto.progress.collect {
                     _statePhoto.emit(StatePhoto(progress = it))
@@ -124,8 +176,6 @@ class PhotoRepoImpl(private val context: Context) : PhotoRepo {
 
 }
 
-
-//data class StatePhoto(val photos:List<Photo> = emptyList(),val progress:Int=0)
 data class StatePhoto(val photos: List<List<Photo>> = emptyList(), val progress: Float = 0.0f)
 
 
@@ -134,13 +184,9 @@ interface PhotoRepo {
 
     val statePhoto: StateFlow<StatePhoto>
 
-
-    //  suspend  fun  getAllPhoto()
-
-
-    suspend fun deletePhoto()
+    suspend fun deleteAllPhoto()
 
     suspend fun findDuplicatesPhoto()
 
-
+    suspend fun selectPhoto(photo: Photo, indexPhoto: Int)
 }
