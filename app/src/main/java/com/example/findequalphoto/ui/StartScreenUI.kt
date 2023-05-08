@@ -1,9 +1,9 @@
 package com.example.findequalphoto.ui
 
 import android.os.Build
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -12,12 +12,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.findequalphoto.MainActivity
 import com.example.findequalphoto.NavHost
+import com.example.findequalphoto.ui.component.AppButtonUI
+import com.example.findequalphoto.ui.component.AppProgressBar
+import com.example.findequalphoto.ui.component.HeaderTextUI
 import com.example.findequalphoto.ui.theme.FindEqualPhotoTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -66,20 +72,30 @@ fun StartScreenUI(navController: NavController,
 
 @Composable
 fun StartScreenUI(state: StateUI, findPhoto: () -> Unit, modifier: Modifier = Modifier) {
-    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize()) {
-        Text(text = "Старт")
-        if(state is StateUI.Loading) {
-            LinearProgressIndicator(progress = (state).progress)
-        }else{
-            TextButton(onClick = findPhoto) {
-                Text("Найти фото")
+    Column( modifier = modifier
+        .fillMaxSize()
+        .padding(start = 33.dp, end = 33.dp, top = 17.dp)
+        ) {
+
+        HeaderTextUI("Похожие фотографии")
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth().weight(1f)
+        ) {
+
+            if (state is StateUI.Loading) {
+                AppProgressBar(state.progress, Modifier.fillMaxWidth())
+                Text(text = "Поиск похожих фотографий", modifier=Modifier.padding(top=20.dp))
+
+            } else {
+                AppButtonUI(text = "Найти похожие фотографии",onClick = findPhoto, modifier=Modifier.fillMaxWidth())
             }
         }
-
-
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

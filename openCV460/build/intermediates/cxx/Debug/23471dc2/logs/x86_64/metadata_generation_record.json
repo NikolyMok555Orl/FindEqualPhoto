@@ -11,11 +11,11 @@
       "fieldsDescending": {}
     },
     "memoizedSize": -1,
-    "memoizedHashCode": -1211547847
+    "memoizedHashCode": 761664136
   },
   {
     "level_": 0,
-    "message_": "rebuilding JSON C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\.cxx\\Debug\\23471dc2\\x86_64\\android_gradle_build.json due to:",
+    "message_": "JSON \u0027C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\.cxx\\Debug\\23471dc2\\x86_64\\android_gradle_build.json\u0027 was up-to-date",
     "file_": "C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\libcxx_helper\\CMakeLists.txt",
     "tag_": "debug|x86_64",
     "diagnosticCode_": 0,
@@ -25,119 +25,7 @@
       "fieldsDescending": {}
     },
     "memoizedSize": -1,
-    "memoizedHashCode": -1539845052
-  },
-  {
-    "level_": 0,
-    "message_": "- no fingerprint file, will remove stale configuration folder",
-    "file_": "C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\libcxx_helper\\CMakeLists.txt",
-    "tag_": "debug|x86_64",
-    "diagnosticCode_": 0,
-    "memoizedIsInitialized": 1,
-    "unknownFields": {
-      "fields": {},
-      "fieldsDescending": {}
-    },
-    "memoizedSize": -1,
-    "memoizedHashCode": -1478248881
-  },
-  {
-    "level_": 0,
-    "message_": "removing stale contents from \u0027C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\.cxx\\Debug\\23471dc2\\x86_64\u0027",
-    "file_": "C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\libcxx_helper\\CMakeLists.txt",
-    "tag_": "debug|x86_64",
-    "diagnosticCode_": 0,
-    "memoizedIsInitialized": 1,
-    "unknownFields": {
-      "fields": {},
-      "fieldsDescending": {}
-    },
-    "memoizedSize": -1,
-    "memoizedHashCode": -1887943768
-  },
-  {
-    "level_": 0,
-    "message_": "created folder \u0027C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\.cxx\\Debug\\23471dc2\\x86_64\u0027",
-    "file_": "C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\libcxx_helper\\CMakeLists.txt",
-    "tag_": "debug|x86_64",
-    "diagnosticCode_": 0,
-    "memoizedIsInitialized": 1,
-    "unknownFields": {
-      "fields": {},
-      "fieldsDescending": {}
-    },
-    "memoizedSize": -1,
-    "memoizedHashCode": -1820326476
-  },
-  {
-    "level_": 0,
-    "message_": "executing cmake @echo off\n\"C:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\cmake\\\\3.22.1\\\\bin\\\\cmake.exe\" ^\n  \"-HC:\\\\Nikoly\\\\MyProgranAndPet\\\\Android\\\\workTest\\\\FindEqualPhoto\\\\FindEqualPhoto\\\\openCV460\\\\libcxx_helper\" ^\n  \"-DCMAKE_SYSTEM_NAME\u003dAndroid\" ^\n  \"-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\" ^\n  \"-DCMAKE_SYSTEM_VERSION\u003d23\" ^\n  \"-DANDROID_PLATFORM\u003dandroid-23\" ^\n  \"-DANDROID_ABI\u003dx86_64\" ^\n  \"-DCMAKE_ANDROID_ARCH_ABI\u003dx86_64\" ^\n  \"-DANDROID_NDK\u003dC:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\ndk\\\\23.1.7779620\" ^\n  \"-DCMAKE_ANDROID_NDK\u003dC:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\ndk\\\\23.1.7779620\" ^\n  \"-DCMAKE_TOOLCHAIN_FILE\u003dC:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\ndk\\\\23.1.7779620\\\\build\\\\cmake\\\\android.toolchain.cmake\" ^\n  \"-DCMAKE_MAKE_PROGRAM\u003dC:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\cmake\\\\3.22.1\\\\bin\\\\ninja.exe\" ^\n  \"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003dC:\\\\Nikoly\\\\MyProgranAndPet\\\\Android\\\\workTest\\\\FindEqualPhoto\\\\FindEqualPhoto\\\\openCV460\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\23471dc2\\\\obj\\\\x86_64\" ^\n  \"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003dC:\\\\Nikoly\\\\MyProgranAndPet\\\\Android\\\\workTest\\\\FindEqualPhoto\\\\FindEqualPhoto\\\\openCV460\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\23471dc2\\\\obj\\\\x86_64\" ^\n  \"-DCMAKE_BUILD_TYPE\u003dDebug\" ^\n  \"-BC:\\\\Nikoly\\\\MyProgranAndPet\\\\Android\\\\workTest\\\\FindEqualPhoto\\\\FindEqualPhoto\\\\openCV460\\\\.cxx\\\\Debug\\\\23471dc2\\\\x86_64\" ^\n  -GNinja ^\n  \"-DANDROID_STL\u003dc++_shared\"\n",
-    "file_": "C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\libcxx_helper\\CMakeLists.txt",
-    "tag_": "debug|x86_64",
-    "diagnosticCode_": 0,
-    "memoizedIsInitialized": 1,
-    "unknownFields": {
-      "fields": {},
-      "fieldsDescending": {}
-    },
-    "memoizedSize": -1,
-    "memoizedHashCode": -816161703
-  },
-  {
-    "level_": 0,
-    "message_": "@echo off\n\"C:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\cmake\\\\3.22.1\\\\bin\\\\cmake.exe\" ^\n  \"-HC:\\\\Nikoly\\\\MyProgranAndPet\\\\Android\\\\workTest\\\\FindEqualPhoto\\\\FindEqualPhoto\\\\openCV460\\\\libcxx_helper\" ^\n  \"-DCMAKE_SYSTEM_NAME\u003dAndroid\" ^\n  \"-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\" ^\n  \"-DCMAKE_SYSTEM_VERSION\u003d23\" ^\n  \"-DANDROID_PLATFORM\u003dandroid-23\" ^\n  \"-DANDROID_ABI\u003dx86_64\" ^\n  \"-DCMAKE_ANDROID_ARCH_ABI\u003dx86_64\" ^\n  \"-DANDROID_NDK\u003dC:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\ndk\\\\23.1.7779620\" ^\n  \"-DCMAKE_ANDROID_NDK\u003dC:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\ndk\\\\23.1.7779620\" ^\n  \"-DCMAKE_TOOLCHAIN_FILE\u003dC:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\ndk\\\\23.1.7779620\\\\build\\\\cmake\\\\android.toolchain.cmake\" ^\n  \"-DCMAKE_MAKE_PROGRAM\u003dC:\\\\Nikoly\\\\Program\\\\Android\\\\Sdk\\\\cmake\\\\3.22.1\\\\bin\\\\ninja.exe\" ^\n  \"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003dC:\\\\Nikoly\\\\MyProgranAndPet\\\\Android\\\\workTest\\\\FindEqualPhoto\\\\FindEqualPhoto\\\\openCV460\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\23471dc2\\\\obj\\\\x86_64\" ^\n  \"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY\u003dC:\\\\Nikoly\\\\MyProgranAndPet\\\\Android\\\\workTest\\\\FindEqualPhoto\\\\FindEqualPhoto\\\\openCV460\\\\build\\\\intermediates\\\\cxx\\\\Debug\\\\23471dc2\\\\obj\\\\x86_64\" ^\n  \"-DCMAKE_BUILD_TYPE\u003dDebug\" ^\n  \"-BC:\\\\Nikoly\\\\MyProgranAndPet\\\\Android\\\\workTest\\\\FindEqualPhoto\\\\FindEqualPhoto\\\\openCV460\\\\.cxx\\\\Debug\\\\23471dc2\\\\x86_64\" ^\n  -GNinja ^\n  \"-DANDROID_STL\u003dc++_shared\"\n",
-    "file_": "C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\libcxx_helper\\CMakeLists.txt",
-    "tag_": "debug|x86_64",
-    "diagnosticCode_": 0,
-    "memoizedIsInitialized": 1,
-    "unknownFields": {
-      "fields": {},
-      "fieldsDescending": {}
-    },
-    "memoizedSize": -1,
-    "memoizedHashCode": 724103576
-  },
-  {
-    "level_": 0,
-    "message_": "Exiting generation of C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\.cxx\\Debug\\23471dc2\\x86_64\\compile_commands.json.bin normally",
-    "file_": "C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\libcxx_helper\\CMakeLists.txt",
-    "tag_": "debug|x86_64",
-    "diagnosticCode_": 0,
-    "memoizedIsInitialized": 1,
-    "unknownFields": {
-      "fields": {},
-      "fieldsDescending": {}
-    },
-    "memoizedSize": -1,
-    "memoizedHashCode": 1862411658
-  },
-  {
-    "level_": 0,
-    "message_": "done executing cmake",
-    "file_": "C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\libcxx_helper\\CMakeLists.txt",
-    "tag_": "debug|x86_64",
-    "diagnosticCode_": 0,
-    "memoizedIsInitialized": 1,
-    "unknownFields": {
-      "fields": {},
-      "fieldsDescending": {}
-    },
-    "memoizedSize": -1,
-    "memoizedHashCode": 406706895
-  },
-  {
-    "level_": 0,
-    "message_": "hard linked C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\.cxx\\Debug\\23471dc2\\x86_64\\compile_commands.json to C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\.cxx\\tools\\debug\\x86_64\\compile_commands.json",
-    "file_": "C:\\Nikoly\\MyProgranAndPet\\Android\\workTest\\FindEqualPhoto\\FindEqualPhoto\\openCV460\\libcxx_helper\\CMakeLists.txt",
-    "tag_": "debug|x86_64",
-    "diagnosticCode_": 0,
-    "memoizedIsInitialized": 1,
-    "unknownFields": {
-      "fields": {},
-      "fieldsDescending": {}
-    },
-    "memoizedSize": -1,
-    "memoizedHashCode": 1105123290
+    "memoizedHashCode": -739656182
   },
   {
     "level_": 0,
@@ -151,6 +39,6 @@
       "fieldsDescending": {}
     },
     "memoizedSize": -1,
-    "memoizedHashCode": -1950187317
+    "memoizedHashCode": 23024666
   }
 ]
