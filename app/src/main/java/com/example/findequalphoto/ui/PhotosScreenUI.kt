@@ -53,8 +53,9 @@ fun PhotosScreenUI(
         }
 
     }, isSelectPhoto = vm::selectPhoto, isSkip = {
-        vm.skip()
-        navController.popBackStack()
+        navController.navigate(DELETE){
+            popUpTo(START)
+        }
 
     })
 

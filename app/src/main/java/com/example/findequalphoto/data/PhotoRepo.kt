@@ -165,15 +165,11 @@ class PhotoRepoImpl(
     override suspend fun finishProgress() {
         withContext(Dispatchers.Main) {
             _statePhoto.emit(_statePhoto.value.copy(progress = 1.0f))
-            reset()
-        }
-    }
-
-    override suspend fun reset() {
-        withContext(Dispatchers.Main) {
             _statePhoto.emit(StatePhoto())
         }
     }
+
+
 
     override suspend fun findDuplicatesPhoto() {
         val isFindPhoto = getAllPhoto()
@@ -216,5 +212,4 @@ interface PhotoRepo {
 
     suspend fun finishProgress()
 
-    suspend fun reset()
 }

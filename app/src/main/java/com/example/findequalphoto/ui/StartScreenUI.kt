@@ -2,18 +2,12 @@ package com.example.findequalphoto.ui
 
 import android.os.Build
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,8 +27,8 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 @Composable
 fun StartScreenUI(
     navController: NavController,
-    vm: MainVM = viewModel(
-        factory = MainVM.getMainVM(
+    vm: StartVM = viewModel(
+        factory = StartVM.getStartVM(
             (LocalContext.current as MainActivity).repo
         )
     )
@@ -57,10 +51,13 @@ fun StartScreenUI(
     val state = vm.statePhoto.collectAsState()
 
 
-    LaunchedEffect(key1 = state.value) {
-        if (state.value is StateUI.Loaded) {
-            navController.navigate(NavHost.PHOTOS)
+    LaunchedEffect(key1 = true) {
+        vm.navToNext.collect {
+            if (it) {
+                navController.navigate(NavHost.PHOTOS)
+            }
         }
+
     }
 
 
@@ -95,7 +92,10 @@ fun StartScreenUI(state: StateUI, findPhoto: () -> Unit, modifier: Modifier = Mo
             when (state) {
                 is StateUI.Loading -> {
                     AppProgressBar(state.progress, Modifier.fillMaxWidth())
-                    Text(text = "Поиск похожих фотографий", modifier = Modifier.padding(top = 20.dp))
+                    Text(
+                        text = "Поиск похожих фотографий",
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
 
                 }
                 is StateUI.Start -> {
@@ -107,7 +107,19 @@ fun StartScreenUI(state: StateUI, findPhoto: () -> Unit, modifier: Modifier = Mo
                 }
                 is StateUI.Loaded -> {
                     AppProgressBar(1.0f, Modifier.fillMaxWidth())
-                    Text(text = "Поиск похожих фотографий", modifier = Modifier.padding(top = 20.dp))
+                    Text(
+                        text = "Поиск похожих фотографий",
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
+
+                }
+                StateUI.Empty -> {
+                    Text("Дубликаты не найдены")
+                    AppButtonUI(
+                        text = "Найти похожие фотографии",
+                        onClick = findPhoto,
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
                 }
             }

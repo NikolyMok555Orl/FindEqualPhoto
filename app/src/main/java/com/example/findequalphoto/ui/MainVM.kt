@@ -21,26 +21,9 @@ class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
     val statePhoto: StateFlow<StateUI>
         get() = _statePhotoUI
 
-
-    fun findPhoto(){
-        viewModelScope.launch {
-            _statePhotoUI.emit(StateUI.Loading(0.01f))
-            withContext(Dispatchers.IO) {
-                photoRepo.findDuplicatesPhoto()
-            }
-        }
-    }
-
-
     fun selectPhoto(photo:Photo, indexPhoto:Int){
         viewModelScope.launch {
             photoRepo.selectPhoto(photo, indexPhoto)
-        }
-    }
-
-    fun skip(){
-        viewModelScope.launch {
-            photoRepo.reset()
         }
     }
 
@@ -59,8 +42,10 @@ class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
             photoRepo.statePhoto.collect{
                 if(it.progress >0.0f && it.progress<1.0f){
                     _statePhotoUI.emit(StateUI.Loading(it.progress))
-                }else if(it.progress==1.0f || it.photos.isNotEmpty()){
+                }else if( it.photos.isNotEmpty()){
                     _statePhotoUI.emit(StateUI.Loaded(it.photos))
+                }else if (it.progress==1.0f){
+                    _statePhotoUI.emit(StateUI.Empty)
                 }else{
                     _statePhotoUI.emit(StateUI.Start)
                 }
@@ -82,6 +67,7 @@ sealed class StateUI(){
     object Start: StateUI()
     class Loading(val progress:Float): StateUI()
     class Loaded(val photos:List<List<Photo>>): StateUI()
+    object Empty: StateUI()
 }
 
 
