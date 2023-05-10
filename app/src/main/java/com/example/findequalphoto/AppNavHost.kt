@@ -31,6 +31,8 @@ fun AppNavHost(
         }
         composable(NavHost.DELETE) {
             DeleteAndFinalScreenUI(navController)
+
+
         }
 
 

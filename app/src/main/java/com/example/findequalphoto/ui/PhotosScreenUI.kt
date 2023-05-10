@@ -1,7 +1,7 @@
 package com.example.findequalphoto.ui
 
 
-import androidx.compose.foundation.BorderStroke
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,7 +17,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,9 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.PopUpToBuilder
 import coil.compose.AsyncImage
 import com.example.findequalphoto.MainActivity
 import com.example.findequalphoto.NavHost
+import com.example.findequalphoto.NavHost.DELETE
+import com.example.findequalphoto.NavHost.START
 import com.example.findequalphoto.data.Photo
 import com.example.findequalphoto.ui.component.AppButtonUI
 import com.example.findequalphoto.ui.component.HeaderTextUI
@@ -46,8 +48,15 @@ fun PhotosScreenUI(
 
     PhotosScreenUI(stateUI = stateUI.value, isDelete = {
         vm.deletePhoto()
-        navController.navigate(NavHost.DELETE)
-    }, isSelectPhoto = vm::selectPhoto)
+        navController.navigate(DELETE){
+            popUpTo(START)
+        }
+
+    }, isSelectPhoto = vm::selectPhoto, isSkip = {
+        vm.skip()
+        navController.popBackStack()
+
+    })
 
 }
 
@@ -56,6 +65,7 @@ fun PhotosScreenUI(
 fun PhotosScreenUI(
     stateUI: StateUI,
     isDelete: () -> Unit,
+    isSkip:()->Unit,
     isSelectPhoto: (photo: Photo, indexPhotos: Int) -> Unit
 ) {
     Surface(
@@ -137,7 +147,7 @@ fun PhotosScreenUI(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AppButtonUI(text = "Удалить", onClick = isDelete, Modifier.fillMaxWidth())
-                    TextButton(onClick = { /*TODO*/ }, Modifier.fillMaxWidth()) {
+                    TextButton(onClick = isSkip, Modifier.fillMaxWidth()) {
                         Text(text = "Пропустить", color = MaterialTheme.colors.onBackground)
                     }
                 }
@@ -245,7 +255,7 @@ private fun CardPhotoUI(
 @Composable
 private fun PhotosScreenUIPreview() {
     FindEqualPhotoTheme {
-        PhotosScreenUI(StateUI.Loaded(
+        PhotosScreenUI(stateUI=StateUI.Loaded(
             listOf(
                 listOf(
                     Photo(android.net.Uri.EMPTY, "", 0, true),
@@ -254,7 +264,7 @@ private fun PhotosScreenUIPreview() {
                     Photo(android.net.Uri.EMPTY, "", 0, false)
                 )
             )
-        ), {}, { _, _ -> })
+        ),{}, {}, { _, _ -> })
 
     }
 }

@@ -57,7 +57,7 @@ fun DeleteAndFinalScreenUI(stateUI: StateUI, modifier:Modifier=Modifier){
                         text = "Поиск похожих фотографий",
                         modifier = Modifier.padding(top = 20.dp)
                     )
-                } else if (stateUI is StateUI.Loaded) {
+                } else {
                     Text(text = "Все дубликаты удалены", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                 }
             }

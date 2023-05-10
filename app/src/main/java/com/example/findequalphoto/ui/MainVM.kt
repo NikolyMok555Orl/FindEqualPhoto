@@ -38,6 +38,12 @@ class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
         }
     }
 
+    fun skip(){
+        viewModelScope.launch {
+            photoRepo.reset()
+        }
+    }
+
     fun deletePhoto(isFinish:Boolean=false){
         viewModelScope.launch {
             if(!isFinish) {

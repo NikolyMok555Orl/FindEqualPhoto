@@ -79,6 +79,7 @@ class FindDuplicatesPhoto {
             sizeFind--
             val res = MainScope().async {
                 _progress.value = _progress.value + step
+                if (_progress.value > 1.0f) _progress.value = 1.0f
                 _progress.emit(_progress.value)
             }
             res.await()
@@ -123,6 +124,7 @@ class FindDuplicatesPhoto {
             false
         }
     }
+
     private suspend fun decodeSampledBitmapFromUri(
         uri: Uri,
         reqWidth: Int,

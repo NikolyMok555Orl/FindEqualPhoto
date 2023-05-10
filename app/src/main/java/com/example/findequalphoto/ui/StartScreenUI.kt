@@ -31,9 +31,14 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun StartScreenUI(navController: NavController,
-                  vm: MainVM = viewModel(factory = MainVM.getMainVM(
-                      (LocalContext.current as MainActivity).repo))) {
+fun StartScreenUI(
+    navController: NavController,
+    vm: MainVM = viewModel(
+        factory = MainVM.getMainVM(
+            (LocalContext.current as MainActivity).repo
+        )
+    )
+) {
 
 
     // Camera permission state
@@ -59,7 +64,7 @@ fun StartScreenUI(navController: NavController,
     }
 
 
-    StartScreenUI(state=state.value,findPhoto = {
+    StartScreenUI(state = state.value, findPhoto = {
         if (photoPermissionState.allPermissionsGranted) {
             vm.findPhoto()
         } else {
@@ -72,29 +77,43 @@ fun StartScreenUI(navController: NavController,
 
 @Composable
 fun StartScreenUI(state: StateUI, findPhoto: () -> Unit, modifier: Modifier = Modifier) {
-    Column( modifier = modifier
-        .fillMaxSize()
-        .padding(start = 33.dp, end = 33.dp, top = 17.dp)
-        ) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(start = 33.dp, end = 33.dp, top = 17.dp)
+    ) {
 
         HeaderTextUI("Похожие фотографии")
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().weight(1f)
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
 
-            if (state is StateUI.Loading) {
-                AppProgressBar(state.progress, Modifier.fillMaxWidth())
-                Text(text = "Поиск похожих фотографий", modifier=Modifier.padding(top=20.dp))
+            when (state) {
+                is StateUI.Loading -> {
+                    AppProgressBar(state.progress, Modifier.fillMaxWidth())
+                    Text(text = "Поиск похожих фотографий", modifier = Modifier.padding(top = 20.dp))
 
-            } else {
-                AppButtonUI(text = "Найти похожие фотографии",onClick = findPhoto, modifier=Modifier.fillMaxWidth())
+                }
+                is StateUI.Start -> {
+                    AppButtonUI(
+                        text = "Найти похожие фотографии",
+                        onClick = findPhoto,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                is StateUI.Loaded -> {
+                    AppProgressBar(1.0f, Modifier.fillMaxWidth())
+                    Text(text = "Поиск похожих фотографий", modifier = Modifier.padding(top = 20.dp))
+
+                }
             }
         }
     }
 }
-
 
 
 @Preview(showBackground = true)
@@ -102,7 +121,7 @@ fun StartScreenUI(state: StateUI, findPhoto: () -> Unit, modifier: Modifier = Mo
 private fun StartScreenUIPreview() {
     FindEqualPhotoTheme {
 
-        StartScreenUI(StateUI.Start,{})
+        StartScreenUI(StateUI.Start, {})
 
     }
 }

@@ -37,21 +37,15 @@ class MainActivity : ComponentActivity(), LoaderCallbackInterface, DeletePhotoEx
 
     private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
 
-    /* private val photoRepo:PhotoRepoImpl by lazy {
 
-     }*/
-    val repo by lazy {
-        PhotoRepoImpl(contentResolver) { sender ->
-            deletePhotoFromExternalStorage(
-                sender
-            )
-        }
-    }
+    val repo: PhotoRepoImpl
+        get() = (application as App).getRepo(contentResolver, ::deletePhotoFromExternalStorage)
 
-     private val mainVM:MainVM by viewModels(
-         factoryProducer= {MainVM.getMainVM( repo) }
+    private val mainVM: MainVM by viewModels(
+        factoryProducer = { MainVM.getMainVM(repo) }
 
-     )
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -73,9 +67,9 @@ class MainActivity : ComponentActivity(), LoaderCallbackInterface, DeletePhotoEx
                 if (it.resultCode == RESULT_OK) {
                     if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                         lifecycleScope.launch {
-                             mainVM.deletePhoto()
+                            mainVM.deletePhoto()
                         }
-                    }else{
+                    } else {
                         mainVM.deletePhoto(true)
                     }
                     Toast.makeText(
@@ -94,17 +88,17 @@ class MainActivity : ComponentActivity(), LoaderCallbackInterface, DeletePhotoEx
 
 
         setContent {
-                 FindEqualPhotoTheme {
-                     // A surface container using the 'background' color from the theme
-                     Surface(
-                         modifier = Modifier.fillMaxSize(),
-                         color = MaterialTheme.colors.background,
-                         contentColor = MaterialTheme.colors.onBackground
-                     ) {
-                         AppNavHost()
-                     }
-                 }
-             }
+            FindEqualPhotoTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background,
+                    contentColor = MaterialTheme.colors.onBackground
+                ) {
+                    AppNavHost()
+                }
+            }
+        }
     }
 
     override fun onManagerConnected(status: Int) {

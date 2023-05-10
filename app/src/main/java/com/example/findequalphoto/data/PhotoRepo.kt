@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class PhotoRepoImpl(
     private val contentResolver: ContentResolver,
-    private val senderAsDelete: (sended: IntentSender) -> Unit
+    var senderAsDelete: (sended: IntentSender) -> Unit
 ) : PhotoRepo {
 
 
@@ -115,12 +115,14 @@ class PhotoRepoImpl(
                     val res = contentResolver.delete(it.uri, null, null)
                     if (res >= 1) {
                         MainScope().launch {
-                            _statePhoto.emit(_statePhoto.value.copy(progress = _statePhoto.value.progress + step))
+                            val progress=_statePhoto.value.progress + step
+                            _statePhoto.emit(_statePhoto.value.copy(progress = if(progress>1.0f ) 1.0f else progress))
                         }.join()
                     }
                 }
                 withContext(Dispatchers.Main) {
                     _statePhoto.emit(_statePhoto.value.copy(progress = 1.0f))
+                    _statePhoto.emit(StatePhoto())
                 }
             }
         } catch (e: SecurityException) {
@@ -138,6 +140,9 @@ class PhotoRepoImpl(
                 }
                 else -> null
             }
+            withContext(Dispatchers.Main) {
+                _statePhoto.emit(StatePhoto())
+            }
             intentSender?.let { sender ->
                 senderAsDelete(sender)
             }
@@ -153,13 +158,20 @@ class PhotoRepoImpl(
             photos[indexPhoto] = photos[indexPhoto].copy(isSelect = !photos[indexPhoto].isSelect)
             val photosTimeStap = _statePhoto.value.photos.toMutableList()
             photosTimeStap[indexAllPhotos] = photos
-            _statePhoto.emit(StatePhoto(photosTimeStap.toList(), progress = 100.0f))
+            _statePhoto.emit(StatePhoto(photosTimeStap.toList(), progress = 1.0f))
         }
     }
 
     override suspend fun finishProgress() {
         withContext(Dispatchers.Main) {
             _statePhoto.emit(_statePhoto.value.copy(progress = 1.0f))
+            reset()
+        }
+    }
+
+    override suspend fun reset() {
+        withContext(Dispatchers.Main) {
+            _statePhoto.emit(StatePhoto())
         }
     }
 
@@ -203,4 +215,6 @@ interface PhotoRepo {
     suspend fun selectPhoto(photo: Photo, indexPhoto: Int)
 
     suspend fun finishProgress()
+
+    suspend fun reset()
 }
