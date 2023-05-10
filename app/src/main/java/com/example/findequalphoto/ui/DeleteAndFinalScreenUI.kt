@@ -22,23 +22,31 @@ import com.example.findequalphoto.ui.MainVM
 import com.example.findequalphoto.ui.StateUI
 import com.example.findequalphoto.ui.component.AppProgressBar
 import com.example.findequalphoto.ui.component.HeaderTextUI
+import com.example.findequalphoto.ui.component.LogoUI
 import com.example.findequalphoto.ui.theme.FindEqualPhotoTheme
 
 @Composable
-fun DeleteAndFinalScreenUI( navController: NavController,
-                            vm: MainVM = viewModel(factory = MainVM.getMainVM(
-                                (LocalContext.current as MainActivity).repo))
-){
+fun DeleteAndFinalScreenUI(
+    navController: NavController,
+    vm: MainVM = viewModel(
+        factory = MainVM.getMainVM(
+            (LocalContext.current as MainActivity).repo
+        )
+    )
+) {
 
-    val stateUI=vm.statePhoto.collectAsState()
+    val stateUI = vm.statePhoto.collectAsState()
     DeleteAndFinalScreenUI(stateUI.value)
-    
-    
+
+
 }
 
 @Composable
-fun DeleteAndFinalScreenUI(stateUI: StateUI, modifier:Modifier=Modifier){
-    Surface(contentColor = MaterialTheme.colors.onBackground, color = MaterialTheme.colors.background) {
+fun DeleteAndFinalScreenUI(stateUI: StateUI, modifier: Modifier = Modifier) {
+    Surface(
+        contentColor = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colors.background
+    ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -51,35 +59,44 @@ fun DeleteAndFinalScreenUI(stateUI: StateUI, modifier:Modifier=Modifier){
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                LogoUI()
+                Spacer(modifier = Modifier.padding(top=34.dp))
                 if (stateUI is StateUI.Loading) {
+
                     AppProgressBar(stateUI.progress, Modifier.fillMaxWidth())
                     Text(
                         text = "Поиск похожих фотографий",
                         modifier = Modifier.padding(top = 20.dp)
                     )
                 } else {
-                    Text(text = "Все дубликаты удалены", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                    Text(
+                        text = "Все дубликаты удалены",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }
     }
 }
 
-    @Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
-private fun DeleteAndFinalScreenUIPreview(){
-    FindEqualPhotoTheme{
+private fun DeleteAndFinalScreenUIPreview() {
+    FindEqualPhotoTheme {
 
-        DeleteAndFinalScreenUI(stateUI = StateUI.Loaded(
-            listOf(
+        DeleteAndFinalScreenUI(
+            stateUI = StateUI.Loaded(
                 listOf(
-                    Photo(Uri.EMPTY, "", 0, true),
-                    Photo(Uri.EMPTY, "", 0, false),
-                    Photo(Uri.EMPTY, "", 0, true),
-                    Photo(Uri.EMPTY, "", 0, false)
+                    listOf(
+                        Photo(Uri.EMPTY, "", 0, true),
+                        Photo(Uri.EMPTY, "", 0, false),
+                        Photo(Uri.EMPTY, "", 0, true),
+                        Photo(Uri.EMPTY, "", 0, false)
+                    )
                 )
             )
-        ))
+        )
 
     }
 }

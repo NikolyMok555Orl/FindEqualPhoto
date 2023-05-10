@@ -88,10 +88,12 @@ fun PhotosScreenUI(
             ) {
                 Text(
                     text = "Будет доступно после удаления выбранных похожих фотографий",
-                    style = MaterialTheme.typography.body2
+                    style = MaterialTheme.typography.body2,
+                    modifier = Modifier.weight(1f)
                 )
-                Row() {
-                    Text(text = "X", style = MaterialTheme.typography.h3.copy(fontSize = 38.sp))
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(text = if(stateUI is StateUI.Loaded) stateUI.sizeDelete else "X", style = MaterialTheme.typography.h3.copy(fontSize = 30.sp)
+                    , modifier = Modifier.padding(end=2.dp))
                     Text(text = "гб", style = MaterialTheme.typography.body2.copy(fontSize = 12.sp))
                 }
 

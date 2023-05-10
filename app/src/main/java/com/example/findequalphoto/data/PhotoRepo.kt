@@ -10,10 +10,13 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.activity.result.IntentSenderRequest
+import com.example.findequalphoto.BuildConfig
 import com.example.findequalphoto.MainActivity
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 
 class PhotoRepoImpl(
@@ -50,18 +53,18 @@ class PhotoRepoImpl(
 
         val queryArgs = Bundle()
         // Set the reverse order
-        queryArgs.putInt(
-            ContentResolver.QUERY_ARG_SORT_DIRECTION,
-            ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
-        )
-        // Set the reverse condition - file add time
-        queryArgs.putStringArray(
-            ContentResolver.QUERY_ARG_SORT_COLUMNS,
-            arrayOf(MediaStore.Files.FileColumns.DATE_ADDED)
-        )
-        // Page setting
-        /*   queryArgs.putInt(ContentResolver.QUERY_ARG_OFFSET, page * mPageSize)
-           queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, mPageSize)*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            queryArgs.putInt(
+                ContentResolver.QUERY_ARG_SORT_DIRECTION,
+                ContentResolver.QUERY_SORT_DIRECTION_DESCENDING
+            )
+
+            // Set the reverse condition - file add time
+            queryArgs.putStringArray(
+                ContentResolver.QUERY_ARG_SORT_COLUMNS,
+                arrayOf(MediaStore.Files.FileColumns.DATE_ADDED)
+            )
+        }
 
         val sortOrder = "${MediaStore.Images.Media.DISPLAY_NAME} ASC"
 
@@ -107,7 +110,7 @@ class PhotoRepoImpl(
         withContext(Dispatchers.Main) {
             _statePhoto.emit(_statePhoto.value.copy(progress = 0.01f))
         }
-        val deletesPhoto = _statePhoto.value.photos.flatten().filter { it.isSelect }
+        val deletesPhoto = _statePhoto.value.getSelectPhoto()
         val step = 1.0f / deletesPhoto.size
         try {
             withContext(Dispatchers.IO) {
@@ -115,8 +118,8 @@ class PhotoRepoImpl(
                     val res = contentResolver.delete(it.uri, null, null)
                     if (res >= 1) {
                         MainScope().launch {
-                            val progress=_statePhoto.value.progress + step
-                            _statePhoto.emit(_statePhoto.value.copy(progress = if(progress>1.0f ) 1.0f else progress))
+                            val progress = _statePhoto.value.progress + step
+                            _statePhoto.emit(_statePhoto.value.copy(progress = if (progress > 1.0f) 1.0f else progress))
                         }.join()
                     }
                 }
@@ -170,7 +173,6 @@ class PhotoRepoImpl(
     }
 
 
-
     override suspend fun findDuplicatesPhoto() {
         val isFindPhoto = getAllPhoto()
         if (isFindPhoto) {
@@ -196,7 +198,19 @@ class PhotoRepoImpl(
 
 }
 
-data class StatePhoto(val photos: List<List<Photo>> = emptyList(), val progress: Float = 0.0f)
+data class StatePhoto(val photos: List<List<Photo>> = emptyList(), val progress: Float = 0.0f) {
+
+    fun getSelectPhoto() = photos.flatten().filter { it.isSelect }
+
+    /**Получаем потенциальное свободно пространство после удаление*/
+    fun getFreeSize(): Double {
+        val df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.FLOOR
+        val allDeletePhoto = getSelectPhoto()
+        val size=allDeletePhoto.sumOf { it.size } / 1073741824.0
+        return  df.format(size).toDouble()
+    }
+}
 
 
 interface PhotoRepo {

@@ -18,6 +18,7 @@ import com.example.findequalphoto.NavHost
 import com.example.findequalphoto.ui.component.AppButtonUI
 import com.example.findequalphoto.ui.component.AppProgressBar
 import com.example.findequalphoto.ui.component.HeaderTextUI
+import com.example.findequalphoto.ui.component.LogoUI
 import com.example.findequalphoto.ui.theme.FindEqualPhotoTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -88,7 +89,8 @@ fun StartScreenUI(state: StateUI, findPhoto: () -> Unit, modifier: Modifier = Mo
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-
+            LogoUI()
+            Spacer(modifier = Modifier.padding(top=34.dp))
             when (state) {
                 is StateUI.Loading -> {
                     AppProgressBar(state.progress, Modifier.fillMaxWidth())

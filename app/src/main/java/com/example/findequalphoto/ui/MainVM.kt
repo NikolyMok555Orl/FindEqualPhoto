@@ -16,22 +16,21 @@ import kotlinx.coroutines.withContext
 class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
 
 
-
     private val _statePhotoUI: MutableStateFlow<StateUI> = MutableStateFlow(StateUI.Start)
     val statePhoto: StateFlow<StateUI>
         get() = _statePhotoUI
 
-    fun selectPhoto(photo:Photo, indexPhoto:Int){
+    fun selectPhoto(photo: Photo, indexPhoto: Int) {
         viewModelScope.launch {
             photoRepo.selectPhoto(photo, indexPhoto)
         }
     }
 
-    fun deletePhoto(isFinish:Boolean=false){
+    fun deletePhoto(isFinish: Boolean = false) {
         viewModelScope.launch {
-            if(!isFinish) {
+            if (!isFinish) {
                 photoRepo.deleteAllPhoto()
-            }else{
+            } else {
                 photoRepo.finishProgress()
             }
         }
@@ -39,14 +38,14 @@ class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            photoRepo.statePhoto.collect{
-                if(it.progress >0.0f && it.progress<1.0f){
+            photoRepo.statePhoto.collect {
+                if (it.progress > 0.0f && it.progress < 1.0f) {
                     _statePhotoUI.emit(StateUI.Loading(it.progress))
-                }else if( it.photos.isNotEmpty()){
-                    _statePhotoUI.emit(StateUI.Loaded(it.photos))
-                }else if (it.progress==1.0f){
+                } else if (it.photos.isNotEmpty()) {
+                    _statePhotoUI.emit(StateUI.Loaded(it.photos, "${it.getFreeSize()}"))
+                } else if (it.progress == 1.0f) {
                     _statePhotoUI.emit(StateUI.Empty)
-                }else{
+                } else {
                     _statePhotoUI.emit(StateUI.Start)
                 }
             }
@@ -54,8 +53,8 @@ class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
     }
 
 
-    companion object{
-       fun getMainVM(photoRepo: PhotoRepo)=object : ViewModelProvider.NewInstanceFactory() {
+    companion object {
+        fun getMainVM(photoRepo: PhotoRepo) = object : ViewModelProvider.NewInstanceFactory() {
             override fun <T : ViewModel> create(modelClass: Class<T>): T = MainVM(photoRepo) as T
         }
     }
@@ -63,11 +62,11 @@ class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
 }
 
 /***/
-sealed class StateUI(){
-    object Start: StateUI()
-    class Loading(val progress:Float): StateUI()
-    class Loaded(val photos:List<List<Photo>>): StateUI()
-    object Empty: StateUI()
+sealed class StateUI() {
+    object Start : StateUI()
+    class Loading(val progress: Float) : StateUI()
+    class Loaded(val photos: List<List<Photo>>, val sizeDelete: String = "X") : StateUI()
+    object Empty : StateUI()
 }
 
 
