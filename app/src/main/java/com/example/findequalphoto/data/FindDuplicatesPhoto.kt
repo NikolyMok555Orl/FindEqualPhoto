@@ -3,24 +3,23 @@ package com.example.findequalphoto.data
 import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.opencv.android.Utils
 import org.opencv.core.Core
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
-import java.io.FileNotFoundException
-import java.io.IOException
 import java.io.InputStream
-import kotlin.math.floor
 
 
 class FindDuplicatesPhoto {
@@ -133,20 +132,24 @@ class FindDuplicatesPhoto {
         val onlyBoundsOptions = BitmapFactory.Options()
         // First decode with inJustDecodeBounds=true to check dimensions
         onlyBoundsOptions.inJustDecodeBounds = true
-        var input: InputStream = contentResolver?.openInputStream(uri) ?: return null
+        var input: InputStream = contentResolver.openInputStream(uri) ?: return null
         BitmapFactory.decodeStream(input, null, onlyBoundsOptions)
         if (onlyBoundsOptions.outWidth == -1 || onlyBoundsOptions.outHeight == -1) {
             return null
         }
-        input.close()
+        withContext(Dispatchers.IO) {
+            input.close()
+        }
         // Calculate inSampleSize
         onlyBoundsOptions.inSampleSize =
             calculateInSampleSize(onlyBoundsOptions, reqWidth, reqHeight)
-        input = contentResolver?.openInputStream(uri) ?: return null
+        input = contentResolver.openInputStream(uri) ?: return null
         // Decode bitmap with inSampleSize set
         onlyBoundsOptions.inJustDecodeBounds = false
         val res = BitmapFactory.decodeStream(input, null, onlyBoundsOptions)
-        input.close()
+        withContext(Dispatchers.IO) {
+            input.close()
+        }
         //TODO криво, потом перенесу.
         MainScope().launch {
             _progress.value = _progress.value + step

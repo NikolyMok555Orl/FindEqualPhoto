@@ -3,15 +3,11 @@ package com.example.findequalphoto.data
 import android.app.RecoverableSecurityException
 import android.content.ContentResolver
 import android.content.ContentUris
-import android.content.Context
 import android.content.IntentSender
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.activity.result.IntentSenderRequest
-import com.example.findequalphoto.BuildConfig
-import com.example.findequalphoto.MainActivity
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -157,7 +153,7 @@ class PhotoRepoImpl(
         if (indexAllPhotos > _statePhoto.value.photos.size) return
         val indexPhoto = _statePhoto.value.photos[indexAllPhotos].indexOf(photo)
         if (indexPhoto >= 0) {
-            var photos = _statePhoto.value.photos[indexAllPhotos].toMutableList()
+            val photos = _statePhoto.value.photos[indexAllPhotos].toMutableList()
             photos[indexPhoto] = photos[indexPhoto].copy(isSelect = !photos[indexPhoto].isSelect)
             val photosTimeStap = _statePhoto.value.photos.toMutableList()
             photosTimeStap[indexAllPhotos] = photos
@@ -178,7 +174,7 @@ class PhotoRepoImpl(
         if (isFindPhoto) {
             val duplicatesPhoto =
                 FindDuplicatesPhoto(
-                    photoList.subList(0, 500),
+                    photoList,
                     contentResolver,
                     _statePhoto.value.progress
                 )

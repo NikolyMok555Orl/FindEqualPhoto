@@ -24,10 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.PopUpToBuilder
 import coil.compose.AsyncImage
 import com.example.findequalphoto.MainActivity
-import com.example.findequalphoto.NavHost
 import com.example.findequalphoto.NavHost.DELETE
 import com.example.findequalphoto.NavHost.START
 import com.example.findequalphoto.data.Photo

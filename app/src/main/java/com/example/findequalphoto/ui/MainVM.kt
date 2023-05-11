@@ -1,17 +1,13 @@
 package com.example.findequalphoto.ui
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.findequalphoto.data.Photo
 import com.example.findequalphoto.data.PhotoRepo
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainVM(private val photoRepo: PhotoRepo) : ViewModel() {
 
