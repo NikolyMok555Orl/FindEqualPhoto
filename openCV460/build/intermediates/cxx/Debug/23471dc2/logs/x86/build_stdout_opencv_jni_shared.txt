@@ -1,2 +1,0 @@
-ninja: Entering directory `C:\Nikoly\MyProgranAndPet\Android\workTest\FindEqualPhoto\FindEqualPhoto\openCV460\.cxx\Debug\23471dc2\x86'
-ninja: no work to do.
